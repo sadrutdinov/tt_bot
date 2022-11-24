@@ -13,5 +13,7 @@ public class Config {
     private String userName;
     @Value("${downloadFolder}")
     private String pathToFolderForFiles;
+    @Value("${cookiesStr}")
+    private String cookiesStr;
 
 }

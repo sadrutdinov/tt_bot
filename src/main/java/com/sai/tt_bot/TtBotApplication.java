@@ -1,7 +1,6 @@
 package com.sai.tt_bot;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -13,8 +12,11 @@ import javax.annotation.PostConstruct;
 @SpringBootApplication
 public class TtBotApplication {
 
-    @Autowired
-    private Bot bot;
+    private final Bot bot;
+
+    public TtBotApplication(Bot bot) {
+        this.bot = bot;
+    }
 
     @PostConstruct
     public void init() {

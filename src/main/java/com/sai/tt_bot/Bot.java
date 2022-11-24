@@ -15,10 +15,14 @@ import java.io.File;
 @Component
 public class Bot extends TelegramLongPollingBot {
 
-    @Autowired
-    private Config config;
-    @Autowired
+    private final Config config;
     private TTloader tTloader;
+
+    @Autowired
+    public Bot(Config config, TTloader tTloader) {
+        this.config = config;
+        this.tTloader = tTloader;
+    }
 
     @Override
     public String getBotUsername() {
@@ -33,15 +37,14 @@ public class Bot extends TelegramLongPollingBot {
     @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
+        log.debug(update.toString());
         String message = update.getMessage().getText();
-        if (message.contains("https://vm.tiktok.com/")) {
+        if (message.contains("tiktok.com/")) {
 
             log.debug(message);
             String filePath = tTloader.download(message);
             log.debug(filePath);
-
             Long chatId = update.getMessage().getChatId();
-
 
             InputFile video = new InputFile();
             File file = new File(filePath);
@@ -53,8 +56,9 @@ public class Bot extends TelegramLongPollingBot {
 
             execute(sendVideo);
 
-            file.delete();
-            
+            if (file != null) {
+                file.delete();
+            }
         }
 
     }
