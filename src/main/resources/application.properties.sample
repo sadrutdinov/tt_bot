@@ -1,0 +1,4 @@
+userName= # bot user name
+token= # access token to bot
+downloadFolder=/opt/tt_tg_bot
+server.port=8188

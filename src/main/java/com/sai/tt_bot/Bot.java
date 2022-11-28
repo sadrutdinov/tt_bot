@@ -1,5 +1,9 @@
 package com.sai.tt_bot;
 
+import com.drew.imaging.mp4.Mp4MetadataReader;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,16 +14,18 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
 
 @Slf4j
 @Component
 public class Bot extends TelegramLongPollingBot {
 
     private final Config config;
-    private TTloader tTloader;
+    private final TTLoader tTloader;
 
     @Autowired
-    public Bot(Config config, TTloader tTloader) {
+    public Bot(Config config, TTLoader tTloader) {
         this.config = config;
         this.tTloader = tTloader;
     }
@@ -53,13 +59,27 @@ public class Bot extends TelegramLongPollingBot {
             SendVideo sendVideo = new SendVideo();
             sendVideo.setChatId(String.valueOf(chatId));
             sendVideo.setVideo(video);
-
+            sendVideo.setSupportsStreaming(true);
+            setMetadata(file, sendVideo);
             execute(sendVideo);
 
-            if (file != null) {
-                file.delete();
-            }
+            file.delete();
         }
 
     }
+
+    private static void setMetadata(File file, SendVideo sendVideo) throws IOException {
+        Metadata metadata = Mp4MetadataReader.readMetadata(file);
+        for (Directory directory : metadata.getDirectories()) {
+            for (Tag tag : directory.getTags()) {
+                if (Objects.equals(tag.getTagName(), "Width")) {
+                    sendVideo.setWidth(Integer.parseInt(tag.getDescription().replaceAll("\\D+", "")));
+                }
+                if (Objects.equals(tag.getTagName(), "Height")) {
+                    sendVideo.setHeight(Integer.parseInt(tag.getDescription().replaceAll("\\D+", "")));
+                }
+            }
+        }
+    }
+
 }

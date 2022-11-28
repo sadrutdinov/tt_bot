@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.sai</groupId>
     <artifactId>tt_bot</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <name>tt_bot</name>
     <description>tt_bot</description>
     <properties>
@@ -55,6 +55,19 @@
             <version>1.14.3</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.drewnoakes</groupId>
+            <artifactId>metadata-extractor</artifactId>
+            <version>2.18.0</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -69,10 +82,6 @@
             <version>2.1</version>
             <type>pom</type>
         </dependency>
-
-
-
-
 
 
     </dependencies>
