@@ -26,6 +26,8 @@ public class TTLoader {
     private String getDownloadUrl(String html) {
         String downloadUrl = html.split("\"downloadAddr\":\"")[1].split("\",\"shareCover\"")[0];
         downloadUrl = downloadUrl.replace("\\u002F", "/");
+        downloadUrl = downloadUrl.replace("-prime", "");
+        downloadUrl = downloadUrl.replace("v19", "v16");
         return downloadUrl;
     }
 

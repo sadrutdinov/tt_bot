@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -48,22 +49,40 @@ public class Bot extends TelegramLongPollingBot {
         if (message.contains("tiktok.com/")) {
 
             log.debug(message);
-            String filePath = tTloader.download(message);
-            log.debug(filePath);
+            String filePath = null;
             Long chatId = update.getMessage().getChatId();
 
-            InputFile video = new InputFile();
-            File file = new File(filePath);
-            video.setMedia(file);
+            boolean success = false;
+            for (int i = 0; i < 10; i++) {
+                try {
+                    filePath = tTloader.download(message);
+                    success = true;
+                    break;
+                } catch (Exception e) {
+                    log.error(e.getClass() + ": " + e.getMessage());
+                }
+            }
 
-            SendVideo sendVideo = new SendVideo();
-            sendVideo.setChatId(String.valueOf(chatId));
-            sendVideo.setVideo(video);
-            sendVideo.setSupportsStreaming(true);
-            setMetadata(file, sendVideo);
-            execute(sendVideo);
+            if (!success) {
+                SendMessage sendMessage = new SendMessage();
+                sendMessage.setChatId(String.valueOf(chatId));
+                sendMessage.setText("something went wrong :(");
+                execute(sendMessage);
+            } else {
+                log.debug(filePath);
+                InputFile video = new InputFile();
+                File file = new File(filePath);
+                video.setMedia(file);
 
-            file.delete();
+                SendVideo sendVideo = new SendVideo();
+                sendVideo.setChatId(String.valueOf(chatId));
+                sendVideo.setVideo(video);
+                sendVideo.setSupportsStreaming(true);
+                setMetadata(file, sendVideo);
+                execute(sendVideo);
+
+                file.delete();
+            }
         }
 
     }
